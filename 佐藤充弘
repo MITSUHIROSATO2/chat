@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>チャットアプリ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .chat-container {
+            width: 100%;
+            max-width: 400px;
+            height: 600px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-header {
+            background-color: #4a86e8;
+            color: white;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .chat-header h1 {
+            font-size: 18px;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+        }
+        
+        .message.user {
+            justify-content: flex-end;
+        }
+        
+        .message-content {
+            max-width: 70%;
+            padding: 10px;
+            border-radius: 15px;
+        }
+        
+        .bot .message-content {
+            background-color: #f0f0f0;
+            border-bottom-left-radius: 0;
+        }
+        
+        .user .message-content {
+            background-color: #4a86e8;
+            color: white;
+            border-bottom-right-radius: 0;
+        }
+        
+        .message-time {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+        
+        .user .message-time {
+            color: #c9dcff;
+            text-align: right;
+        }
+        
+        .chat-input {
+            padding: 15px;
+            background-color: #fff;
+            border-top: 1px solid #f0f0f0;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .input-container {
+            display: flex;
+        }
+        
+        .message-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-right: none;
+            border-radius: 20px 0 0 20px;
+            outline: none;
+        }
+        
+        .send-button {
+            padding: 10px 15px;
+            background-color: #4a86e8;
+            color: white;
+            border: none;
+            border-radius: 0 20px 20px 0;
+            cursor: pointer;
+        }
+        
+        .send-button:hover {
+            background-color: #3b78e7;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>チャットアプリ</h1>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <!-- メッセージはJavaScriptで動的に追加 -->
+        </div>
+        <div class="chat-input">
+            <div class="input-container">
+                <input type="text" class="message-input" id="message-input" placeholder="メッセージを入力..." autocomplete="off">
+                <button class="send-button" id="send-button">送信</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM要素の取得
+            const messagesContainer = document.getElementById('chat-messages');
+            const messageInput = document.getElementById('message-input');
+            const sendButton = document.getElementById('send-button');
+            
+            // 初期メッセージを表示
+            addMessage('こんにちは！', 'bot');
+            addMessage('このチャットアプリへようこそ！', 'bot');
+            
+            // 送信ボタンクリックイベント
+            sendButton.addEventListener('click', sendMessage);
+            
+            // Enterキー押下イベント
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // メッセージ送信関数
+            function sendMessage() {
+                const message = messageInput.value.trim();
+                if (message === '') return;
+                
+                // ユーザーメッセージを表示
+                addMessage(message, 'user');
+                messageInput.value = '';
+                
+                // 自動返信（デモ用）
+                setTimeout(() => {
+                    addMessage('メッセージありがとうございます！', 'bot');
+                }, 1000);
+            }
+            
+            // メッセージ追加関数
+            function addMessage(text, sender) {
+                // 現在時刻を取得
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const timeString = `${hours}:${minutes}`;
+                
+                // メッセージ要素を作成
+                const messageElement = document.createElement('div');
+                messageElement.className = `message ${sender}`;
+                
+                const contentElement = document.createElement('div');
+                contentElement.className = 'message-content';
+                contentElement.textContent = text;
+                
+                const timeElement = document.createElement('div');
+                timeElement.className = 'message-time';
+                timeElement.textContent = timeString;
+                
+                contentElement.appendChild(timeElement);
+                messageElement.appendChild(contentElement);
+                messagesContainer.appendChild(messageElement);
+                
+                // 最新メッセージが見えるようにスクロール
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        });
+    </script>
+</body>
+</html>
